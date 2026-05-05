@@ -23,22 +23,29 @@ export type WireDecision = 'couper' | 'ne-pas-couper'
 type DecisionRule = 'C' | 'N' | 'P' | 'S' | 'B'
 
 const DECISION_TABLE: Record<string, DecisionRule> = {
-  'white--':      'C',
-  'white-L-':     'S',
-  'white--S':     'C',
-  'white-L-S':    'S',
-  'red--':        'C',
-  'red-L-':       'B',
-  'red--S':       'P',
-  'red-L-S':      'N',
-  'blue--':       'B',
-  'blue-L-':      'C',
-  'blue--S':      'B',
-  'blue-L-S':     'P',
-  'red-blue--':   'N',
-  'red-blue-L-':  'C',
-  'red-blue--S':  'B',
-  'red-blue-L-S': 'C',
+  // White
+  'white--':     'C',  // aucun → toujours couper
+  'white-L-':    'N',  // LED seulement → ne jamais couper
+  'white--S':    'C',  // star seulement → toujours couper
+  'white-L-S':   'S',  // LED + star → couper si numéro de série pair
+
+  // Red
+  'red--':       'C',  // aucun → toujours couper
+  'red-L-':      'B',  // LED seulement → couper si ≥2 piles
+  'red--S':      'C',  // star seulement → toujours couper
+  'red-L-S':     'N',  // LED + star → ne jamais couper
+
+  // Blue
+  'blue--':      'S',  // aucun → couper si numéro de série pair
+  'blue-L-':     'P',  // LED seulement → couper si port parallèle
+  'blue--S':     'N',  // star seulement → ne jamais couper
+  'blue-L-S':    'P',  // LED + star → couper si port parallèle
+
+  // Red + Blue
+  'red-blue--':  'S',  // aucun → couper si numéro de série pair
+  'red-blue-L-': 'S',  // LED seulement → couper si numéro de série pair
+  'red-blue--S': 'P',  // star seulement → couper si port parallèle
+  'red-blue-L-S':'N',  // LED + star → ne jamais couper
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

@@ -94,7 +94,7 @@
 | --- | ------------------------------------------------------------------- | ------ | --------------------------------------------------- |
 | 5.1 | Responsive mobile (utilisation sur téléphone pendant le jeu)        | ✅     | Priorité haute                                      |
 | 5.2 | Animations et transitions                                           | ✅     |                                                     |
-| 5.3 | Relecture clean code — taille fonctions/composants, styles Tailwind | ⬜     |                                                     |
+| 5.3 | Relecture clean code — taille fonctions/composants, styles Tailwind | ✅     |                                                     |
 | 5.4 | Vérification accessibilité (contrastes, focus)                      | ⬜     |                                                     |
 | 5.5 | Déploiement (Vercel recommandé)                                     | ⬜     |                                                     |
 | 5.6 | Partager le lien avec les amis 🎉                                   | ⬜     |                                                     |

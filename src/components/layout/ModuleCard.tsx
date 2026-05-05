@@ -74,7 +74,7 @@ function ModuleCardBody({ title, description }: ModuleCardBodyProps) {
       <h2 className="font-mono text-sm font-semibold tracking-wide uppercase text-foreground">
         {title}
       </h2>
-      <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
+      <p className="font-mono text-xs text-muted-foreground leading-relaxed">{description}</p>
     </div>
   )
 }

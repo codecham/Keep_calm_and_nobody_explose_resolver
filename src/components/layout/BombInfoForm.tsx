@@ -4,7 +4,7 @@ import { useBombContext } from '@/app/context/BombContext'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { BombInfo, IndicatorCode, PortType } from '../../../types/modules'
+import { BombInfo, IndicatorCode, PortType } from '@/types/modules'
 
 const INDICATOR_CODES: IndicatorCode[] = [
   'SND', 'CLR', 'CAR', 'IND', 'FRQ', 'SIG', 'NSA', 'MSA', 'TRN', 'BOB', 'FRK',

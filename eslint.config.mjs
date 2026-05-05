@@ -12,6 +12,7 @@ const eslintConfig = [
     languageOptions: {
       parser: tsParser,
       globals: {
+        ...globals.browser,
         React: "readonly",
       },
     },

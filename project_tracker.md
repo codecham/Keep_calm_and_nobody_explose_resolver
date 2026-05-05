@@ -22,9 +22,9 @@
 | --- | ----------------------------------------------------------------- | ------ | ------------------------------------------------ |
 | 0.1 | Initialiser le projet Next.js (TypeScript, Tailwind, shadcn/ui)   | ✅     | `npx create-next-app`                            |
 | 0.2 | Configurer ESLint + Prettier                                      | ✅     |                                                  |
-| 0.3 | Créer la structure de dossiers du projet                          | ✅     | Voir INSTRUCTIONS.md                             |
-| 0.4 | Créer le `BombContext` (infos globales de la bombe)               | ✅     | Numéro de série, piles, indicateurs, ports       |
-| 0.5 | Créer les types partagés (`types/modules.ts`)                     | ✅     |                                                  |
+| 0.3 | Créer la structure de dossiers du projet                          | ✅     | ⚠ Tout doit être dans src/ — components/, lib/, types/ sont sous src/	|
+| 0.4 | Créer le `BombContext` (infos globales de la bombe)               | ✅     | Numéro de série, piles, indicateurs, ports       						| 
+| 0.5 | Créer les types partagés (`types/modules.ts`)                     | ✅     | Chemin corrigé : src/types/modules.ts            |
 | 0.6 | Configurer `cn()` (clsx + tailwind-merge) et vérifier dispo `cva` | ✅     | Obligatoire pour la gestion des classes Tailwind |
 | 0.7 | Mettre en place le repo GitHub                                    | ✅     |                                                  |
 
@@ -37,7 +37,7 @@
 | 1.1 | Créer le layout principal (`app/layout.tsx`) | ✅     | Header, fond sombre, police     |
 | 1.2 | Créer le composant `Header.tsx`              | ✅     | Titre, accès rapide aux modules |
 | 1.3 | Créer le composant `ModuleCard.tsx`          | ✅     | Nom, icône, statut              |
-| 1.4 | Créer la page dashboard (`app/page.tsx`)     | ✅     | Grille de ModuleCards           |
+| 1.4 | Créer la page dashboard (`src/app/page.tsx`) | ✅     | Grille de ModuleCards           |
 | 1.5 | Modale / panneau "Infos de la bombe"         | ✅     | Alimenter le BombContext        |
 
 ---
@@ -45,11 +45,11 @@
 ## Phase 2 — Module : Wires (fils simples)
 
 | #   | Tâche                                         | Statut | Notes                                         |
-| --- | --------------------------------------------- | ------ | --------------------------------------------- |
-| 2.1 | Implémenter la logique `lib/modules/wires.ts` | ⬜     | Règles du manuel officiel                     |
-| 2.2 | Créer le composant `WiresSolver.tsx`          | ⬜     | Sélection des couleurs, affichage du résultat |
-| 2.3 | Créer la page `app/modules/wires/page.tsx`    | ⬜     |                                               |
-| 2.4 | Tests manuels de toutes les combinaisons      | ⬜     |                                               |
+| --- | --------------------------------------------- 		| ------ | --------------------------------------------- |
+| 2.1 | Implémenter la logique `src/lib/modules/wires.ts` 	| ✅     | Règles du manuel officiel                     |
+| 2.2 | Créer le composant `WiresSolver.tsx`          		| ✅     | Sélection des couleurs, affichage du résultat |
+| 2.3 | Créer la page `src/app/modules/wires/page.tsx`    	| ✅     |                                               |
+| 2.4 | Tests manuels de toutes les combinaisons      		| ✅     |                                               |
 
 ---
 
@@ -57,9 +57,9 @@
 
 | #   | Tâche                                          | Statut | Notes                                           |
 | --- | ---------------------------------------------- | ------ | ----------------------------------------------- |
-| 3.1 | Implémenter la logique `lib/modules/button.ts` | ⬜     | Incl. règle de relâchement avec DEL             |
+| 3.1 | Implémenter la logique `src/lib/modules/button.ts` | ⬜     | Incl. règle de relâchement avec DEL             |
 | 3.2 | Créer le composant `ButtonSolver.tsx`          | ⬜     | Sélection couleur + label, gestion hold/release |
-| 3.3 | Créer la page `app/modules/button/page.tsx`    | ⬜     |                                                 |
+| 3.3 | Créer la page `src/app/modules/button/page.tsx`    | ⬜     |                                                 |
 | 3.4 | Tests manuels de toutes les combinaisons       | ⬜     |                                                 |
 
 ---
@@ -68,9 +68,9 @@
 
 | #   | Tâche                                                     | Statut | Notes                                                     |
 | --- | --------------------------------------------------------- | ------ | --------------------------------------------------------- |
-| 4.1 | Implémenter la logique `lib/modules/complicated-wires.ts` | ⬜     | Table de décision avec LED/étoile/couleur                 |
+| 4.1 | Implémenter la logique `src/lib/modules/complicated-wires.ts` | ⬜     | Table de décision avec LED/étoile/couleur                 |
 | 4.2 | Créer le composant `ComplicatedWiresSolver.tsx`           | ⬜     | Interface pour chaque fil, affichage couper/ne pas couper |
-| 4.3 | Créer la page `app/modules/complicated-wires/page.tsx`    | ⬜     |                                                           |
+| 4.3 | Créer la page `src/app/modules/complicated-wires/page.tsx`    | ⬜     |                                                           |
 | 4.4 | Tests manuels de toutes les combinaisons                  | ⬜     |                                                           |
 
 ---
@@ -122,6 +122,10 @@
 | —    | App Router Next.js             | Standard actuel, meilleur support RSC       |
 | —    | BombContext plutôt que Zustand | Scope simple, pas besoin d'un store externe |
 | —    | Pas d'i18n pour l'instant      | Interface uniquement en français            |
+
+## ⚠ Pièges connus
+- L'alias `@/*` pointe sur `src/*` (voir tsconfig.json). Tous les dossiers (components, lib, types) doivent être sous `src/`, jamais à la racine.
+- Les imports de types doivent utiliser `@/types/modules` et non des chemins relatifs `../../../`.
 
 ---
 

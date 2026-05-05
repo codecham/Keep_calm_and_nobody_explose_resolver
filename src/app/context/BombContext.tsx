@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react'
-import { BombInfo } from '../../../types/modules'
+import { BombInfo } from '../../types/modules'
 
 const defaultBombInfo: BombInfo = {
   serialNumber: '',

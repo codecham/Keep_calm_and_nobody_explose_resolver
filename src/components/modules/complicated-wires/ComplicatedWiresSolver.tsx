@@ -38,17 +38,19 @@ interface WireCountControlProps {
 
 function WireCountControl({ count, onChange }: WireCountControlProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+    <fieldset className="flex flex-col gap-2">
+      <legend className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-1">
         Nombre de fils
-      </span>
-      <div className="flex gap-2">
+      </legend>
+      <div role="group" className="flex gap-2">
         {[2, 3, 4, 5, 6].map((n) => (
           <button
             key={n}
             onClick={() => onChange(n)}
+            aria-pressed={count === n}
+            aria-label={`${n} fils`}
             className={cn(
-              'w-11 h-11 sm:w-10 sm:h-10 font-mono text-sm border transition-colors duration-150',
+              'w-11 h-11 sm:w-10 sm:h-10 font-mono text-sm border transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               count === n
                 ? 'border-primary text-primary bg-primary/10'
                 : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground/40',
@@ -58,25 +60,27 @@ function WireCountControl({ count, onChange }: WireCountControlProps) {
           </button>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
 interface ColorSelectorProps {
+  wireIndex: number
   selected: ComplexWireColor
   onSelect: (color: ComplexWireColor) => void
 }
 
-function ColorSelector({ selected, onSelect }: ColorSelectorProps) {
+function ColorSelector({ wireIndex, selected, onSelect }: ColorSelectorProps) {
   return (
-    <div className="flex gap-2.5 sm:gap-2">
+    <div role="group" aria-label={`Couleur du fil ${wireIndex + 1}`} className="flex gap-2.5 sm:gap-2">
       {WIRE_COLORS.map(({ value, label, bgClass }) => (
         <button
           key={value}
-          title={label}
+          aria-label={label}
+          aria-pressed={selected === value}
           onClick={() => onSelect(value)}
           className={cn(
-            'w-8 h-8 sm:w-7 sm:h-7 rounded-full border-2 transition-all duration-150',
+            'w-8 h-8 sm:w-7 sm:h-7 rounded-full border-2 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             bgClass,
             selected === value
               ? 'border-white scale-125 shadow-lg'
@@ -97,9 +101,10 @@ interface TogglePillProps {
 function TogglePill({ label, active, onToggle }: TogglePillProps) {
   return (
     <button
+      aria-pressed={active}
       onClick={onToggle}
       className={cn(
-        'px-3 py-2 sm:py-1 font-mono text-xs border transition-colors duration-150 min-w-12 sm:min-w-0',
+        'px-3 py-2 sm:py-1 font-mono text-xs border transition-colors duration-150 min-w-12 sm:min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
         active
           ? 'border-primary text-primary bg-primary/10'
           : 'border-border text-muted-foreground hover:border-foreground/40',
@@ -135,8 +140,12 @@ interface WireRowProps {
 }
 
 function WireRow({ index, wire, decision, onChange }: WireRowProps) {
+  const decisionLabel = decision === 'couper' ? 'Couper' : 'Ne pas couper'
+
   return (
     <div
+      role="group"
+      aria-label={`Fil ${index + 1} — ${decisionLabel}`}
       className={cn(
         'flex flex-col sm:flex-row sm:items-center gap-3 p-3 border transition-colors duration-150',
         decision === 'couper'        ? 'border-primary/40 bg-primary/5' :
@@ -146,12 +155,15 @@ function WireRow({ index, wire, decision, onChange }: WireRowProps) {
     >
       {/* Ligne 1 : numéro + couleurs + décision */}
       <div className="flex items-center gap-3">
-        <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">#{index + 1}</span>
+        <span className="font-mono text-xs text-muted-foreground w-5 shrink-0" aria-hidden="true">
+          #{index + 1}
+        </span>
         <ColorSelector
+          wireIndex={index}
           selected={wire.color}
           onSelect={(color) => onChange({ ...wire, color })}
         />
-        <div className="sm:hidden ml-auto">
+        <div className="sm:hidden ml-auto" aria-live="polite">
           <WireDecisionBadge decision={decision} />
         </div>
       </div>
@@ -168,7 +180,7 @@ function WireRow({ index, wire, decision, onChange }: WireRowProps) {
           active={wire.hasStar}
           onToggle={() => onChange({ ...wire, hasStar: !wire.hasStar })}
         />
-        <div className="hidden sm:block ml-2">
+        <div className="hidden sm:block ml-2" aria-live="polite">
           <WireDecisionBadge decision={decision} />
         </div>
       </div>
@@ -179,9 +191,9 @@ function WireRow({ index, wire, decision, onChange }: WireRowProps) {
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function ComplicatedWiresSolver() {
-  const [wireCount, setWireCount]     = useState(2)
-  const [wires, setWires]             = useState<ComplexWire[]>(Array(2).fill(null).map(() => ({ ...EMPTY_WIRE })))
-  const [conditions, setConditions]   = useState<ComplicatedWiresConditions>(DEFAULT_CONDITIONS)
+  const [wireCount, setWireCount]   = useState(2)
+  const [wires, setWires]           = useState<ComplexWire[]>(Array(2).fill(null).map(() => ({ ...EMPTY_WIRE })))
+  const [conditions, setConditions] = useState<ComplicatedWiresConditions>(DEFAULT_CONDITIONS)
 
   function handleWireCountChange(count: number) {
     setWireCount(count)
@@ -223,21 +235,25 @@ export function ComplicatedWiresSolver() {
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+          <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground" id="wires-config-label">
             Configuration des fils
           </span>
-          <span className="font-mono text-xs text-muted-foreground hidden sm:block">LED · ★</span>
+          <span className="font-mono text-xs text-muted-foreground hidden sm:block" aria-hidden="true">
+            LED · ★
+          </span>
         </div>
 
-        {wires.map((wire, index) => (
-          <WireRow
-            key={index}
-            index={index}
-            wire={wire}
-            decision={solveComplexWire(wire, conditions)}
-            onChange={(w) => handleWireChange(index, w)}
-          />
-        ))}
+        <div role="group" aria-labelledby="wires-config-label" className="flex flex-col gap-2">
+          {wires.map((wire, index) => (
+            <WireRow
+              key={index}
+              index={index}
+              wire={wire}
+              decision={solveComplexWire(wire, conditions)}
+              onChange={(w) => handleWireChange(index, w)}
+            />
+          ))}
+        </div>
       </div>
 
       <Button

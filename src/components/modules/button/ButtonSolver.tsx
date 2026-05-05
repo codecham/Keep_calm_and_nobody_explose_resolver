@@ -45,18 +45,19 @@ interface ColorSelectorProps {
 
 function ColorSelector({ selected, onSelect }: ColorSelectorProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+    <fieldset className="flex flex-col gap-2">
+      <legend className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-1">
         Couleur du bouton
-      </span>
-      <div className="flex gap-4 sm:gap-3">
+      </legend>
+      <div role="group" className="flex gap-4 sm:gap-3">
         {BUTTON_COLORS.map(({ value, label, bgClass, ringClass }) => (
           <button
             key={value}
-            title={label}
+            aria-label={label}
+            aria-pressed={selected === value}
             onClick={() => onSelect(value)}
             className={cn(
-              'w-14 h-14 sm:w-12 sm:h-12 rounded-full transition-all duration-150 border-2',
+              'w-14 h-14 sm:w-12 sm:h-12 rounded-full transition-all duration-150 border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               bgClass,
               selected === value
                 ? cn('border-white ring-2 ring-offset-2 ring-offset-background scale-110', ringClass)
@@ -66,11 +67,11 @@ function ColorSelector({ selected, onSelect }: ColorSelectorProps) {
         ))}
       </div>
       {selected && (
-        <span className="font-mono text-xs text-foreground/60">
+        <span className="font-mono text-xs text-foreground/60" aria-live="polite">
           {BUTTON_COLORS.find((c) => c.value === selected)?.label}
         </span>
       )}
-    </div>
+    </fieldset>
   )
 }
 
@@ -81,17 +82,18 @@ interface LabelSelectorProps {
 
 function LabelSelector({ selected, onSelect }: LabelSelectorProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+    <fieldset className="flex flex-col gap-2">
+      <legend className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-1">
         Texte du bouton
-      </span>
-      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+      </legend>
+      <div role="group" className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
         {BUTTON_LABELS.map(({ value, display }) => (
           <button
             key={value}
+            aria-pressed={selected === value}
             onClick={() => onSelect(value)}
             className={cn(
-              'px-4 h-11 sm:h-9 font-mono text-xs tracking-widest border transition-colors duration-150',
+              'px-4 h-11 sm:h-9 font-mono text-xs tracking-widest border transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               selected === value
                 ? 'border-primary text-primary bg-primary/10'
                 : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground/40',
@@ -101,7 +103,7 @@ function LabelSelector({ selected, onSelect }: LabelSelectorProps) {
           </button>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
@@ -112,18 +114,19 @@ interface StripSelectorProps {
 
 function StripSelector({ selected, onSelect }: StripSelectorProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+    <fieldset className="flex flex-col gap-2">
+      <legend className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-1">
         Couleur de la bande LED
-      </span>
-      <div className="flex gap-4 sm:gap-3 items-center">
+      </legend>
+      <div role="group" className="flex gap-4 sm:gap-3 items-center">
         {STRIP_COLORS.map(({ value, label, bgClass, borderClass }) => (
           <button
             key={value}
-            title={label}
+            aria-label={label}
+            aria-pressed={selected === value}
             onClick={() => onSelect(value)}
             className={cn(
-              'w-10 h-10 sm:w-8 sm:h-8 border-2 transition-all duration-150',
+              'w-10 h-10 sm:w-8 sm:h-8 border-2 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               bgClass,
               selected === value
                 ? cn('scale-125 shadow-lg', borderClass)
@@ -133,11 +136,11 @@ function StripSelector({ selected, onSelect }: StripSelectorProps) {
         ))}
       </div>
       {selected && (
-        <span className="font-mono text-xs text-foreground/60">
+        <span className="font-mono text-xs text-foreground/60" aria-live="polite">
           {STRIP_COLORS.find((c) => c.value === selected)?.label}
         </span>
       )}
-    </div>
+    </fieldset>
   )
 }
 
@@ -149,14 +152,14 @@ function ActionResult({ result }: ActionResultProps) {
   const isHold = result.action === 'hold'
 
   return (
-    <div className="animate-result-in flex flex-col gap-3">
+    <div role="status" aria-live="polite" className="animate-result-in flex flex-col gap-3">
       <div
         className={cn(
           'border p-4 flex items-center gap-3',
           isHold ? 'border-ktane-amber/40 bg-ktane-amber/5' : 'border-primary/40 bg-primary/5',
         )}
       >
-        <span className={cn('text-lg shrink-0', isHold ? 'text-ktane-amber' : 'text-primary')}>
+        <span className={cn('text-lg shrink-0', isHold ? 'text-ktane-amber' : 'text-primary')} aria-hidden="true">
           {isHold ? '⏸' : '✓'}
         </span>
         <p className="font-mono text-sm text-foreground tracking-wide">
@@ -166,7 +169,7 @@ function ActionResult({ result }: ActionResultProps) {
 
       {isHold && result.holdInstruction && (
         <div className="border border-border bg-secondary/30 p-4 flex items-start gap-3">
-          <span className="text-muted-foreground text-lg mt-0.5 shrink-0">→</span>
+          <span className="text-muted-foreground text-lg mt-0.5 shrink-0" aria-hidden="true">→</span>
           <p className="font-mono text-sm text-foreground/80">{result.holdInstruction}</p>
         </div>
       )}
@@ -177,11 +180,11 @@ function ActionResult({ result }: ActionResultProps) {
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function ButtonSolver() {
-  const [selectedColor, setSelectedColor]   = useState<ButtonColor | null>(null)
-  const [selectedLabel, setSelectedLabel]   = useState<ButtonLabel | null>(null)
-  const [selectedStrip, setSelectedStrip]   = useState<StripColor | null>(null)
+  const [selectedColor, setSelectedColor]         = useState<ButtonColor | null>(null)
+  const [selectedLabel, setSelectedLabel]         = useState<ButtonLabel | null>(null)
+  const [selectedStrip, setSelectedStrip]         = useState<StripColor | null>(null)
   const [showStripSelector, setShowStripSelector] = useState(false)
-  const [conditions, setConditions]         = useState<ButtonConditions>(DEFAULT_CONDITIONS)
+  const [conditions, setConditions]               = useState<ButtonConditions>(DEFAULT_CONDITIONS)
 
   const preliminaryResult =
     selectedColor && selectedLabel
@@ -247,7 +250,8 @@ export function ButtonSolver() {
           </p>
           <button
             onClick={() => setShowStripSelector(true)}
-            className="self-start font-mono text-xs tracking-widest uppercase border border-ktane-amber/40 text-ktane-amber px-3 py-2 sm:py-1.5 hover:bg-ktane-amber/10 transition-colors"
+            aria-label="Indiquer la couleur de la bande LED"
+            className="self-start font-mono text-xs tracking-widest uppercase border border-ktane-amber/40 text-ktane-amber px-3 py-2 sm:py-1.5 hover:bg-ktane-amber/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
           >
             Indiquer la couleur →
           </button>
@@ -259,7 +263,6 @@ export function ButtonSolver() {
           <StripSelector selected={selectedStrip} onSelect={setSelectedStrip} />
         </div>
       )}
-
 
       {finalResult && <ActionResult result={finalResult} />}
 

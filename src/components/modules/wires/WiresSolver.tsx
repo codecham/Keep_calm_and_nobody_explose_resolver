@@ -28,17 +28,19 @@ interface WireCountControlProps {
 
 function WireCountControl({ count, onChange }: WireCountControlProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+    <fieldset className="flex flex-col gap-2">
+      <legend className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-1">
         Nombre de fils
-      </span>
-      <div className="flex gap-2">
+      </legend>
+      <div role="group" aria-label="Nombre de fils" className="flex gap-2">
         {[3, 4, 5, 6].map((n) => (
           <button
             key={n}
             onClick={() => onChange(n)}
+            aria-pressed={count === n}
+            aria-label={`${n} fils`}
             className={cn(
-              'w-11 h-11 sm:w-10 sm:h-10 font-mono text-sm border transition-colors duration-150',
+              'w-11 h-11 sm:w-10 sm:h-10 font-mono text-sm border transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
               count === n
                 ? 'border-primary text-primary bg-primary/10'
                 : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground/40',
@@ -48,7 +50,7 @@ function WireCountControl({ count, onChange }: WireCountControlProps) {
           </button>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
@@ -61,17 +63,18 @@ interface WireColorPickerProps {
 function WireColorPicker({ index, selectedColor, onSelect }: WireColorPickerProps) {
   return (
     <div className="flex items-center gap-3">
-      <span className="font-mono text-xs text-muted-foreground w-8 text-right shrink-0">
+      <span className="font-mono text-xs text-muted-foreground w-8 text-right shrink-0" aria-hidden="true">
         #{index + 1}
       </span>
-      <div className="flex gap-3 sm:gap-2">
+      <div role="group" aria-label={`Couleur du fil ${index + 1}`} className="flex gap-3 sm:gap-2">
         {WIRE_COLORS.map(({ value, label, bgClass, borderClass }) => (
           <button
             key={value}
-            title={label}
+            aria-label={label}
+            aria-pressed={selectedColor === value}
             onClick={() => onSelect(value)}
             className={cn(
-              'w-9 h-9 sm:w-7 sm:h-7 rounded-full border-2 transition-all duration-150',
+              'w-9 h-9 sm:w-7 sm:h-7 rounded-full border-2 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               bgClass,
               selectedColor === value
                 ? cn(borderClass, 'scale-125 shadow-lg')
@@ -81,7 +84,7 @@ function WireColorPicker({ index, selectedColor, onSelect }: WireColorPickerProp
         ))}
       </div>
       {selectedColor && (
-        <span className="font-mono text-xs text-foreground/60">
+        <span className="font-mono text-xs text-foreground/60" aria-live="polite">
           {WIRE_COLORS.find((c) => c.value === selectedColor)?.label}
         </span>
       )}
@@ -95,8 +98,12 @@ interface WireResultProps {
 
 function WireResult({ instruction }: WireResultProps) {
   return (
-    <div className="animate-result-in border border-primary/40 bg-primary/5 p-4 flex items-center gap-3">
-      <span className="text-primary text-lg shrink-0">✓</span>
+    <div
+      role="status"
+      aria-live="polite"
+      className="animate-result-in border border-primary/40 bg-primary/5 p-4 flex items-center gap-3"
+    >
+      <span className="text-primary text-lg shrink-0" aria-hidden="true">✓</span>
       <p className="font-mono text-sm text-foreground tracking-wide">{instruction}</p>
     </div>
   )
@@ -141,17 +148,19 @@ export function WiresSolver() {
       <WireCountControl count={wireCount} onChange={handleWireCountChange} />
 
       <div className="flex flex-col gap-3">
-        <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+        <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground" id="wire-colors-label">
           Couleurs des fils
         </span>
-        {selectedColors.map((color, index) => (
-          <WireColorPicker
-            key={index}
-            index={index}
-            selectedColor={color}
-            onSelect={(c) => handleColorSelect(index, c)}
-          />
-        ))}
+        <div role="group" aria-labelledby="wire-colors-label" className="flex flex-col gap-3">
+          {selectedColors.map((color, index) => (
+            <WireColorPicker
+              key={index}
+              index={index}
+              selectedColor={color}
+              onSelect={(c) => handleColorSelect(index, c)}
+            />
+          ))}
+        </div>
       </div>
 
       {result && <WireResult key={result} instruction={result} />}

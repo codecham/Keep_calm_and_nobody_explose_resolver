@@ -73,17 +73,17 @@ interface BombConditionsProps {
 
 export function BombConditions({ conditions, visibleKeys, onChange }: BombConditionsProps) {
   const visibleConditions = ALL_CONDITIONS.filter((c) => visibleKeys.includes(c.key))
-
+ 
   function handleToggle(key: ConditionKey) {
     onChange({ ...conditions, [key]: !conditions[key] })
   }
-
+ 
   return (
-    <div className="flex flex-col gap-2">
-      <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
+    <fieldset className="flex flex-col gap-2">
+      <legend className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">
         Conditions de la bombe
-      </span>
-      <div className="flex flex-col gap-1.5">
+      </legend>
+      <div className="flex flex-col gap-1.5" role="group">
         {visibleConditions.map(({ key, label }) => (
           <ConditionToggle
             key={key}
@@ -93,6 +93,6 @@ export function BombConditions({ conditions, visibleKeys, onChange }: BombCondit
           />
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }

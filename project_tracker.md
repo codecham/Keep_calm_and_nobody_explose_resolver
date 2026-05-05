@@ -57,10 +57,10 @@
 
 | #   | Tâche                                          | Statut | Notes                                           |
 | --- | ---------------------------------------------- | ------ | ----------------------------------------------- |
-| 3.1 | Implémenter la logique `src/lib/modules/button.ts` | ⬜     | Incl. règle de relâchement avec DEL             |
-| 3.2 | Créer le composant `ButtonSolver.tsx`          | ⬜     | Sélection couleur + label, gestion hold/release |
-| 3.3 | Créer la page `src/app/modules/button/page.tsx`    | ⬜     |                                                 |
-| 3.4 | Tests manuels de toutes les combinaisons       | ⬜     |                                                 |
+| 3.1 | Implémenter la logique `src/lib/modules/button.ts` | ✅     | Incl. règle de relâchement avec DEL             |
+| 3.2 | Créer le composant `ButtonSolver.tsx`          | ✅     | Sélection couleur + label, gestion hold/release |
+| 3.3 | Créer la page `src/app/modules/button/page.tsx`    | ✅     |                                                 |
+| 3.4 | Tests manuels de toutes les combinaisons       | ✅     |                                                 |
 
 ---
 

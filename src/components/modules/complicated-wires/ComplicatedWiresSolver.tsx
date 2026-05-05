@@ -48,7 +48,7 @@ function WireCountControl({ count, onChange }: WireCountControlProps) {
             key={n}
             onClick={() => onChange(n)}
             className={cn(
-              'w-10 h-10 font-mono text-sm border transition-colors duration-150',
+              'w-11 h-11 sm:w-10 sm:h-10 font-mono text-sm border transition-colors duration-150',
               count === n
                 ? 'border-primary text-primary bg-primary/10'
                 : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground/40',
@@ -69,18 +69,18 @@ interface ColorSelectorProps {
 
 function ColorSelector({ selected, onSelect }: ColorSelectorProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2.5 sm:gap-2">
       {WIRE_COLORS.map(({ value, label, bgClass }) => (
         <button
           key={value}
           title={label}
           onClick={() => onSelect(value)}
           className={cn(
-            'w-7 h-7 rounded-full border-2 transition-all duration-150',
+            'w-8 h-8 sm:w-7 sm:h-7 rounded-full border-2 transition-all duration-150',
             bgClass,
             selected === value
               ? 'border-white scale-125 shadow-lg'
-              : 'border-transparent opacity-60 hover:opacity-100 hover:scale-110',
+              : 'border-transparent opacity-60 hover:opacity-100 hover:scale-110 active:opacity-100',
           )}
         />
       ))}
@@ -99,7 +99,7 @@ function TogglePill({ label, active, onToggle }: TogglePillProps) {
     <button
       onClick={onToggle}
       className={cn(
-        'px-3 py-1 font-mono text-xs border transition-colors duration-150',
+        'px-3 py-2 sm:py-1 font-mono text-xs border transition-colors duration-150 min-w-12 sm:min-w-0',
         active
           ? 'border-primary text-primary bg-primary/10'
           : 'border-border text-muted-foreground hover:border-foreground/40',
@@ -107,6 +107,23 @@ function TogglePill({ label, active, onToggle }: TogglePillProps) {
     >
       {label}
     </button>
+  )
+}
+
+interface WireDecisionBadgeProps {
+  decision: WireDecision
+}
+
+function WireDecisionBadge({ decision }: WireDecisionBadgeProps) {
+  return (
+    <span
+      className={cn(
+        'font-mono text-xs shrink-0',
+        decision === 'couper' ? 'text-primary' : 'text-red-400',
+      )}
+    >
+      {decision === 'couper' ? '✓ Couper' : '✗ Garder'}
+    </span>
   )
 }
 
@@ -121,52 +138,50 @@ function WireRow({ index, wire, decision, onChange }: WireRowProps) {
   return (
     <div
       className={cn(
-        'flex items-center gap-4 p-3 border transition-colors duration-150',
-        decision === 'couper'         ? 'border-primary/40 bg-primary/5'  :
-        decision === 'ne-pas-couper'  ? 'border-red-500/30 bg-red-500/5'  :
+        'flex flex-col sm:flex-row sm:items-center gap-3 p-3 border transition-colors duration-150',
+        decision === 'couper'        ? 'border-primary/40 bg-primary/5' :
+        decision === 'ne-pas-couper' ? 'border-red-500/30 bg-red-500/5' :
         'border-border',
       )}
     >
-      <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">#{index + 1}</span>
-
-      <ColorSelector
-        selected={wire.color}
-        onSelect={(color) => onChange({ ...wire, color })}
-      />
-
-      <div className="flex gap-2 ml-auto">
-        <TogglePill label="LED" active={wire.hasLed}  onToggle={() => onChange({ ...wire, hasLed: !wire.hasLed })} />
-        <TogglePill label="★"   active={wire.hasStar} onToggle={() => onChange({ ...wire, hasStar: !wire.hasStar })} />
+      {/* Ligne 1 : numéro + couleurs + décision */}
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">#{index + 1}</span>
+        <ColorSelector
+          selected={wire.color}
+          onSelect={(color) => onChange({ ...wire, color })}
+        />
+        <div className="sm:hidden ml-auto">
+          <WireDecisionBadge decision={decision} />
+        </div>
       </div>
 
-      <WireDecisionBadge decision={decision} />
+      {/* Ligne 2 : toggles + décision (desktop) */}
+      <div className="flex items-center gap-2 sm:ml-auto">
+        <TogglePill
+          label="LED"
+          active={wire.hasLed}
+          onToggle={() => onChange({ ...wire, hasLed: !wire.hasLed })}
+        />
+        <TogglePill
+          label="★"
+          active={wire.hasStar}
+          onToggle={() => onChange({ ...wire, hasStar: !wire.hasStar })}
+        />
+        <div className="hidden sm:block ml-2">
+          <WireDecisionBadge decision={decision} />
+        </div>
+      </div>
     </div>
-  )
-}
-
-interface WireDecisionBadgeProps {
-  decision: WireDecision
-}
-
-function WireDecisionBadge({ decision }: WireDecisionBadgeProps) {
-  return (
-    <span
-      className={cn(
-        'font-mono text-xs w-24 text-right shrink-0',
-        decision === 'couper' ? 'text-primary' : 'text-red-400',
-      )}
-    >
-      {decision === 'couper' ? '✓ Couper' : '✗ Garder'}
-    </span>
   )
 }
 
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function ComplicatedWiresSolver() {
-  const [wireCount, setWireCount] = useState(2)
-  const [wires, setWires]         = useState<ComplexWire[]>(Array(2).fill(null).map(() => ({ ...EMPTY_WIRE })))
-  const [conditions, setConditions] = useState<ComplicatedWiresConditions>(DEFAULT_CONDITIONS)
+  const [wireCount, setWireCount]     = useState(2)
+  const [wires, setWires]             = useState<ComplexWire[]>(Array(2).fill(null).map(() => ({ ...EMPTY_WIRE })))
+  const [conditions, setConditions]   = useState<ComplicatedWiresConditions>(DEFAULT_CONDITIONS)
 
   function handleWireCountChange(count: number) {
     setWireCount(count)
@@ -203,6 +218,7 @@ export function ComplicatedWiresSolver() {
           })
         }
       />
+
       <WireCountControl count={wireCount} onChange={handleWireCountChange} />
 
       <div className="flex flex-col gap-2">
@@ -210,7 +226,7 @@ export function ComplicatedWiresSolver() {
           <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
             Configuration des fils
           </span>
-          <span className="font-mono text-xs text-muted-foreground">LED · ★</span>
+          <span className="font-mono text-xs text-muted-foreground hidden sm:block">LED · ★</span>
         </div>
 
         {wires.map((wire, index) => (
@@ -227,7 +243,7 @@ export function ComplicatedWiresSolver() {
       <Button
         variant="outline"
         onClick={handleReset}
-        className="font-mono text-xs tracking-widest uppercase"
+        className="font-mono text-xs tracking-widest uppercase h-11 sm:h-8"
       >
         Réinitialiser
       </Button>

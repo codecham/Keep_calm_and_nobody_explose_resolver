@@ -182,6 +182,7 @@
 | —    | Pas d'i18n pour l'instant                             | Interface uniquement en français                                              |
 | —    | Composant `BombConditions` partagé                    | Cohérence visuelle entre modules, ajout de nouvelles clés en un seul endroit  |
 | —    | Conditions affichées en premier dans chaque solver    | On configure la bombe avant de faire les choix du module — plus naturel       |
+| —    | Header converti en Client Component                   | Menu burger mobile nécessite useState                                         |
 
 ---
 

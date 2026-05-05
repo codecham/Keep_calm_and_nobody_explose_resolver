@@ -10,11 +10,11 @@ import { Button } from '@/components/ui/button'
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
 const WIRE_COLORS: { value: WireColor; label: string; bgClass: string; borderClass: string }[] = [
-  { value: 'red',    label: 'Rouge', bgClass: 'bg-red-600',   borderClass: 'border-red-500' },
-  { value: 'blue',   label: 'Bleu',  bgClass: 'bg-blue-500',  borderClass: 'border-blue-400' },
+  { value: 'red',    label: 'Rouge', bgClass: 'bg-red-600',    borderClass: 'border-red-500' },
+  { value: 'blue',   label: 'Bleu',  bgClass: 'bg-blue-500',   borderClass: 'border-blue-400' },
   { value: 'yellow', label: 'Jaune', bgClass: 'bg-yellow-400', borderClass: 'border-yellow-300' },
-  { value: 'white',  label: 'Blanc', bgClass: 'bg-zinc-100',  borderClass: 'border-zinc-300' },
-  { value: 'black',  label: 'Noir',  bgClass: 'bg-zinc-900',  borderClass: 'border-zinc-600' },
+  { value: 'white',  label: 'Blanc', bgClass: 'bg-zinc-100',   borderClass: 'border-zinc-300' },
+  { value: 'black',  label: 'Noir',  bgClass: 'bg-zinc-900',   borderClass: 'border-zinc-600' },
 ]
 
 const DEFAULT_CONDITIONS: WiresConditions = { serialLastDigitOdd: false }
@@ -38,7 +38,7 @@ function WireCountControl({ count, onChange }: WireCountControlProps) {
             key={n}
             onClick={() => onChange(n)}
             className={cn(
-              'w-10 h-10 font-mono text-sm border transition-colors duration-150',
+              'w-11 h-11 sm:w-10 sm:h-10 font-mono text-sm border transition-colors duration-150',
               count === n
                 ? 'border-primary text-primary bg-primary/10'
                 : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground/40',
@@ -64,18 +64,18 @@ function WireColorPicker({ index, selectedColor, onSelect }: WireColorPickerProp
       <span className="font-mono text-xs text-muted-foreground w-8 text-right shrink-0">
         #{index + 1}
       </span>
-      <div className="flex gap-2">
+      <div className="flex gap-3 sm:gap-2">
         {WIRE_COLORS.map(({ value, label, bgClass, borderClass }) => (
           <button
             key={value}
             title={label}
             onClick={() => onSelect(value)}
             className={cn(
-              'w-7 h-7 rounded-full border-2 transition-all duration-150',
+              'w-9 h-9 sm:w-7 sm:h-7 rounded-full border-2 transition-all duration-150',
               bgClass,
               selectedColor === value
                 ? cn(borderClass, 'scale-125 shadow-lg')
-                : 'border-transparent opacity-60 hover:opacity-100 hover:scale-110',
+                : 'border-transparent opacity-60 active:opacity-100 hover:opacity-100 hover:scale-110',
             )}
           />
         ))}
@@ -96,7 +96,7 @@ interface WireResultProps {
 function WireResult({ instruction }: WireResultProps) {
   return (
     <div className="border border-primary/40 bg-primary/5 p-4 flex items-center gap-3">
-      <span className="text-primary text-lg">✓</span>
+      <span className="text-primary text-lg shrink-0">✓</span>
       <p className="font-mono text-sm text-foreground tracking-wide">{instruction}</p>
     </div>
   )
@@ -105,9 +105,9 @@ function WireResult({ instruction }: WireResultProps) {
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function WiresSolver() {
-  const [wireCount, setWireCount]       = useState(3)
+  const [wireCount, setWireCount]           = useState(3)
   const [selectedColors, setSelectedColors] = useState<(WireColor | null)[]>(Array(3).fill(null))
-  const [conditions, setConditions]     = useState<WiresConditions>(DEFAULT_CONDITIONS)
+  const [conditions, setConditions]         = useState<WiresConditions>(DEFAULT_CONDITIONS)
 
   function handleWireCountChange(count: number) {
     setWireCount(count)
@@ -137,7 +137,7 @@ export function WiresSolver() {
         visibleKeys={['serialLastDigitOdd']}
         onChange={(c) => setConditions({ serialLastDigitOdd: !!c.serialLastDigitOdd })}
       />
-      
+
       <WireCountControl count={wireCount} onChange={handleWireCountChange} />
 
       <div className="flex flex-col gap-3">
@@ -154,13 +154,12 @@ export function WiresSolver() {
         ))}
       </div>
 
-
       {result && <WireResult instruction={result} />}
 
       <Button
         variant="outline"
         onClick={handleReset}
-        className="w-full font-mono text-xs tracking-widest uppercase"
+        className="w-full font-mono text-xs tracking-widest uppercase h-11 sm:h-8"
       >
         Réinitialiser
       </Button>

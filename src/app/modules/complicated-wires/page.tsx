@@ -1,11 +1,12 @@
 import { Header } from '@/components/layout/Header'
 import { ComplicatedWiresSolver } from '@/components/modules/complicated-wires/ComplicatedWiresSolver'
+import Link from 'next/link'
 
 export default function ComplicatedWiresPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-10">
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-10">
         <PageHeader />
         <ComplicatedWiresSolver />
       </main>
@@ -16,12 +17,23 @@ export default function ComplicatedWiresPage() {
 function PageHeader() {
   return (
     <div className="flex flex-col gap-2 mb-8 pb-6 border-b border-border">
-      <h1 className="font-mono text-xl tracking-[0.2em] uppercase text-foreground">
-        Fils complexes
-      </h1>
+      <div className="flex items-center gap-3">
+        <Link
+          href="/"
+          className="font-mono text-xs text-muted-foreground hover:text-foreground tracking-widest uppercase transition-colors"
+        >
+          ← Retour
+        </Link>
+      </div>
+      <div className="flex items-center gap-3 mt-2">
+        <span className="text-2xl">⚡</span>
+        <h1 className="font-mono text-lg tracking-[0.2em] uppercase text-foreground">
+          Fils complexes
+        </h1>
+      </div>
       <p className="font-mono text-xs text-muted-foreground tracking-wider">
         Pour chaque fil, sélectionnez la couleur et activez les indicateurs présents (LED et/ou étoile).
-        La décision s'affiche immédiatement à droite.
+        La décision s&apos;affiche immédiatement à droite.
       </p>
     </div>
   )

@@ -23,6 +23,20 @@ const MODULES: ModuleCardProps[] = [
     icon: '⚡',
     status: 'disponible',
   },
+  {
+    title: 'Simon Says',
+    description: 'Séquence de couleurs clignotantes. Table de correspondance selon voyelle et strikes.',
+    href: '/modules/simon',
+    icon: '🎮',
+    status: 'disponible',
+  },
+  {
+    title: 'Mémoire',
+    description: '5 étapes. Appuyez sur le bon bouton selon l\'affichage et l\'historique des étapes précédentes.',
+    href: '/modules/memory',
+    icon: '🧠',
+    status: 'disponible',
+  },
 ]
 
 export default function DashboardPage() {

@@ -107,8 +107,8 @@
 
 | Module             | Priorité | Notes                                         |
 | ------------------ | -------- | --------------------------------------------- |
-| Simon Says         | ⬜ Moyen | Logique dépendante du numéro de série         |
-| Memory             | ⬜ Moyen | Nécessite de mémoriser les étapes précédentes |
+| Simon Says         | ✅ Moyen | Logique dépendante du numéro de série         |
+| Memory             | ✅ Moyen | Nécessite de mémoriser les étapes précédentes |
 | Morse Code         | ⬜ Bas   |                                               |
 | Who's on First     | ⬜ Bas   |                                               |
 | Passwords          | ⬜ Bas   |                                               |

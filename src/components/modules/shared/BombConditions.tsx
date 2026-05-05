@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 export interface BombConditions {
   serialLastDigitOdd?: boolean
   serialLastDigitEven?: boolean
+  serialHasVowel?: boolean
   hasParallelPort?: boolean
   hasTwoOrMoreBatteries?: boolean
   hasMoreThanOneBattery?: boolean
@@ -24,6 +25,7 @@ interface ConditionConfig {
 const ALL_CONDITIONS: ConditionConfig[] = [
   { key: 'serialLastDigitOdd',      label: 'Dernier chiffre du n° de série impair' },
   { key: 'serialLastDigitEven',     label: 'Dernier chiffre du n° de série pair' },
+  { key: 'serialHasVowel',          label: 'N° de série contient une voyelle' },
   { key: 'hasParallelPort',         label: 'Port Parallel présent' },
   { key: 'hasTwoOrMoreBatteries',   label: '≥ 2 piles' },
   { key: 'hasMoreThanOneBattery',   label: '> 1 pile' },
@@ -73,11 +75,11 @@ interface BombConditionsProps {
 
 export function BombConditions({ conditions, visibleKeys, onChange }: BombConditionsProps) {
   const visibleConditions = ALL_CONDITIONS.filter((c) => visibleKeys.includes(c.key))
- 
+
   function handleToggle(key: ConditionKey) {
     onChange({ ...conditions, [key]: !conditions[key] })
   }
- 
+
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="font-mono text-xs tracking-widest uppercase text-muted-foreground mb-2">

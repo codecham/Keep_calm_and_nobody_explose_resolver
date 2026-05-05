@@ -11,6 +11,8 @@ const MODULE_LINKS = [
   { href: '/modules/wires', label: 'Fils' },
   { href: '/modules/button', label: 'Bouton' },
   { href: '/modules/complicated-wires', label: 'Fils complexes' },
+  { href: '/modules/simon', label: 'Simon' },
+  { href: '/modules/memory', label: 'Mémoire' },
 ] as const
 
 export function Header() {

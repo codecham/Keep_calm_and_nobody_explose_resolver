@@ -27,19 +27,19 @@ const DECISION_TABLE: Record<string, DecisionRule> = {
   'white--':     'C',  // aucun → toujours couper
   'white-L-':    'N',  // LED seulement → ne jamais couper
   'white--S':    'C',  // star seulement → toujours couper
-  'white-L-S':   'S',  // LED + star → couper si numéro de série pair
+  'white-L-S':   'B',  // LED + star → couper si plus de 2 piles
 
   // Red
-  'red--':       'C',  // aucun → toujours couper
+  'red--':       'S',  // aucun → toujours couper
   'red-L-':      'B',  // LED seulement → couper si ≥2 piles
   'red--S':      'C',  // star seulement → toujours couper
-  'red-L-S':     'N',  // LED + star → ne jamais couper
+  'red-L-S':     'B',  // LED + star → ne jamais couper
 
   // Blue
   'blue--':      'S',  // aucun → couper si numéro de série pair
   'blue-L-':     'P',  // LED seulement → couper si port parallèle
   'blue--S':     'N',  // star seulement → ne jamais couper
-  'blue-L-S':    'P',  // LED + star → couper si port parallèle
+  'blue-L-S':    'B',  // LED + star → couper si port parallèle
 
   // Red + Blue
   'red-blue--':  'S',  // aucun → couper si numéro de série pair

@@ -67,3 +67,14 @@ export function solveWires(wires: WireColor[], conditions: WiresConditions): str
   if (!solver) return 'Nombre de fils invalide (3 à 6 fils requis)'
   return solver(wires, conditions.serialLastDigitOdd)
 }
+
+export function requiresSerialCheck(wires: WireColor[]): boolean {
+  switch (wires.length) {
+    case 4: return countColor(wires, 'red') > 1
+    case 5: return lastWireIs(wires, 'black')
+          || (countColor(wires, 'red') === 1 && countColor(wires, 'yellow') > 1)
+    case 6: return countColor(wires, 'yellow') === 0
+          || (countColor(wires, 'yellow') === 1 && countColor(wires, 'white') > 1)
+    default: return false
+  }
+}

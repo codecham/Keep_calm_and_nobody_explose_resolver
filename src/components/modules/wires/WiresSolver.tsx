@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { WireColor } from '@/types/modules'
-import { solveWires, WiresConditions } from '@/lib/modules/wires'
 import { BombConditions } from '@/components/modules/shared/BombConditions'
+import { solveWires, WiresConditions, requiresSerialCheck } from '@/lib/modules/wires'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
@@ -135,15 +135,12 @@ export function WiresSolver() {
   }
 
   const allSelected = selectedColors.every((c) => c !== null)
-  const result = allSelected ? solveWires(selectedColors as WireColor[], conditions) : null
+  const filledColors = selectedColors as WireColor[]
+  const needsSerial  = allSelected && requiresSerialCheck(filledColors)
+  const result       = allSelected ? solveWires(filledColors, conditions) : null
 
   return (
     <div className="flex flex-col gap-6">
-      <BombConditions
-        conditions={{ serialLastDigitOdd: conditions.serialLastDigitOdd }}
-        visibleKeys={['serialLastDigitOdd']}
-        onChange={(c) => setConditions({ serialLastDigitOdd: !!c.serialLastDigitOdd })}
-      />
 
       <WireCountControl count={wireCount} onChange={handleWireCountChange} />
 
@@ -162,6 +159,13 @@ export function WiresSolver() {
           ))}
         </div>
       </div>
+      {needsSerial && (
+        <SerialPrompt
+          isOdd={conditions.serialLastDigitOdd}
+          onToggle={() => setConditions((prev) => ({ serialLastDigitOdd: !prev.serialLastDigitOdd }))}
+        />
+      )}
+
 
       {result && <WireResult key={result} instruction={result} />}
 
@@ -172,6 +176,38 @@ export function WiresSolver() {
       >
         Réinitialiser
       </Button>
+    </div>
+  )
+}
+
+interface SerialPromptProps {
+  isOdd: boolean
+  onToggle: () => void
+}
+
+function SerialPrompt({ isOdd, onToggle }: SerialPromptProps) {
+  return (
+    <div className="border border-yellow-500/40 bg-yellow-500/5 p-4 flex flex-col gap-3">
+      <p className="font-mono text-xs text-yellow-400 tracking-wide">
+        ⚠ Le dernier chiffre du numéro de série est-il impair ?
+      </p>
+      <button
+        onClick={onToggle}
+        className={cn(
+          'flex items-center gap-2.5 px-3 py-2 border font-mono text-xs tracking-wide transition-colors duration-150 text-left w-fit',
+          isOdd
+            ? 'border-primary text-primary bg-primary/10'
+            : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground/30',
+        )}
+      >
+        <span className={cn(
+          'w-3.5 h-3.5 border flex items-center justify-center shrink-0',
+          isOdd ? 'border-primary bg-primary/20' : 'border-muted-foreground/50',
+        )}>
+          {isOdd && <span className="text-primary text-[10px] leading-none">✓</span>}
+        </span>
+        Dernier chiffre impair
+      </button>
     </div>
   )
 }

@@ -1,26 +1,33 @@
 'use client'
 
 import { useState } from 'react'
-import { useBombContext } from '@/app/context/BombContext'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { BombConditions } from '@/components/modules/shared/BombConditions'
 import {
   ComplexWire,
   ComplexWireColor,
   WireDecision,
+  ComplicatedWiresConditions,
   solveComplexWire,
 } from '@/lib/modules/complicated-wires'
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
 const WIRE_COLORS: { value: ComplexWireColor; label: string; bgClass: string }[] = [
-  { value: 'white',    label: 'Blanc',         bgClass: 'bg-zinc-100' },
-  { value: 'red',      label: 'Rouge',         bgClass: 'bg-red-600' },
-  { value: 'blue',     label: 'Bleu',          bgClass: 'bg-blue-500' },
-  { value: 'red-blue', label: 'Rouge + Bleu',  bgClass: 'bg-gradient-to-r from-red-600 to-blue-500' },
+  { value: 'white',    label: 'Blanc',        bgClass: 'bg-zinc-100' },
+  { value: 'red',      label: 'Rouge',        bgClass: 'bg-red-600' },
+  { value: 'blue',     label: 'Bleu',         bgClass: 'bg-blue-500' },
+  { value: 'red-blue', label: 'Rouge + Bleu', bgClass: 'bg-gradient-to-r from-red-600 to-blue-500' },
 ]
 
 const EMPTY_WIRE: ComplexWire = { color: 'white', hasLed: false, hasStar: false }
+
+const DEFAULT_CONDITIONS: ComplicatedWiresConditions = {
+  serialLastDigitEven:   false,
+  hasParallelPort:       false,
+  hasTwoOrMoreBatteries: false,
+}
 
 // ─── Sous-composants ─────────────────────────────────────────────────────────
 
@@ -106,18 +113,20 @@ function TogglePill({ label, active, onToggle }: TogglePillProps) {
 interface WireRowProps {
   index: number
   wire: ComplexWire
-  decision: WireDecision | null
+  decision: WireDecision
   onChange: (wire: ComplexWire) => void
 }
 
 function WireRow({ index, wire, decision, onChange }: WireRowProps) {
   return (
-    <div className={cn(
-      'flex items-center gap-4 p-3 border transition-colors duration-150',
-      decision === 'couper'      ? 'border-primary/40 bg-primary/5'    :
-      decision === 'ne-pas-couper' ? 'border-red-500/30 bg-red-500/5' :
-      'border-border',
-    )}>
+    <div
+      className={cn(
+        'flex items-center gap-4 p-3 border transition-colors duration-150',
+        decision === 'couper'         ? 'border-primary/40 bg-primary/5'  :
+        decision === 'ne-pas-couper'  ? 'border-red-500/30 bg-red-500/5'  :
+        'border-border',
+      )}
+    >
       <span className="font-mono text-xs text-muted-foreground w-5 shrink-0">#{index + 1}</span>
 
       <ColorSelector
@@ -126,16 +135,8 @@ function WireRow({ index, wire, decision, onChange }: WireRowProps) {
       />
 
       <div className="flex gap-2 ml-auto">
-        <TogglePill
-          label="LED"
-          active={wire.hasLed}
-          onToggle={() => onChange({ ...wire, hasLed: !wire.hasLed })}
-        />
-        <TogglePill
-          label="★"
-          active={wire.hasStar}
-          onToggle={() => onChange({ ...wire, hasStar: !wire.hasStar })}
-        />
+        <TogglePill label="LED" active={wire.hasLed}  onToggle={() => onChange({ ...wire, hasLed: !wire.hasLed })} />
+        <TogglePill label="★"   active={wire.hasStar} onToggle={() => onChange({ ...wire, hasStar: !wire.hasStar })} />
       </div>
 
       <WireDecisionBadge decision={decision} />
@@ -144,45 +145,28 @@ function WireRow({ index, wire, decision, onChange }: WireRowProps) {
 }
 
 interface WireDecisionBadgeProps {
-  decision: WireDecision | null
+  decision: WireDecision
 }
 
 function WireDecisionBadge({ decision }: WireDecisionBadgeProps) {
-  if (!decision) {
-    return <span className="font-mono text-xs text-muted-foreground w-24 text-right shrink-0">—</span>
-  }
-
   return (
-    <span className={cn(
-      'font-mono text-xs w-24 text-right shrink-0',
-      decision === 'couper' ? 'text-primary' : 'text-red-400',
-    )}>
+    <span
+      className={cn(
+        'font-mono text-xs w-24 text-right shrink-0',
+        decision === 'couper' ? 'text-primary' : 'text-red-400',
+      )}
+    >
       {decision === 'couper' ? '✓ Couper' : '✗ Garder'}
     </span>
-  )
-}
-
-interface BombWarningProps {
-  message: string
-}
-
-function BombWarning({ message }: BombWarningProps) {
-  return (
-    <div className="border border-ktane-amber/40 bg-ktane-amber/5 p-4 flex items-center gap-3">
-      <span className="text-ktane-amber text-lg">⚠</span>
-      <p className="font-mono text-xs text-muted-foreground">{message}</p>
-    </div>
   )
 }
 
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function ComplicatedWiresSolver() {
-  const { bombInfo } = useBombContext()
   const [wireCount, setWireCount] = useState(2)
-  const [wires, setWires] = useState<ComplexWire[]>(Array(2).fill(EMPTY_WIRE).map(() => ({ ...EMPTY_WIRE })))
-
-  const isBombConfigured = bombInfo.serialNumber.length > 0
+  const [wires, setWires]         = useState<ComplexWire[]>(Array(2).fill(null).map(() => ({ ...EMPTY_WIRE })))
+  const [conditions, setConditions] = useState<ComplicatedWiresConditions>(DEFAULT_CONDITIONS)
 
   function handleWireCountChange(count: number) {
     setWireCount(count)
@@ -199,10 +183,26 @@ export function ComplicatedWiresSolver() {
 
   function handleReset() {
     setWires(Array(wireCount).fill(null).map(() => ({ ...EMPTY_WIRE })))
+    setConditions(DEFAULT_CONDITIONS)
   }
 
   return (
     <div className="flex flex-col gap-6">
+      <BombConditions
+        conditions={{
+          serialLastDigitEven:   conditions.serialLastDigitEven,
+          hasParallelPort:       conditions.hasParallelPort,
+          hasTwoOrMoreBatteries: conditions.hasTwoOrMoreBatteries,
+        }}
+        visibleKeys={['serialLastDigitEven', 'hasParallelPort', 'hasTwoOrMoreBatteries']}
+        onChange={(c) =>
+          setConditions({
+            serialLastDigitEven:   !!c.serialLastDigitEven,
+            hasParallelPort:       !!c.hasParallelPort,
+            hasTwoOrMoreBatteries: !!c.hasTwoOrMoreBatteries,
+          })
+        }
+      />
       <WireCountControl count={wireCount} onChange={handleWireCountChange} />
 
       <div className="flex flex-col gap-2">
@@ -210,9 +210,7 @@ export function ComplicatedWiresSolver() {
           <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
             Configuration des fils
           </span>
-          <span className="font-mono text-xs text-muted-foreground">
-            LED · ★
-          </span>
+          <span className="font-mono text-xs text-muted-foreground">LED · ★</span>
         </div>
 
         {wires.map((wire, index) => (
@@ -220,15 +218,11 @@ export function ComplicatedWiresSolver() {
             key={index}
             index={index}
             wire={wire}
-            decision={isBombConfigured ? solveComplexWire(wire, bombInfo) : null}
+            decision={solveComplexWire(wire, conditions)}
             onChange={(w) => handleWireChange(index, w)}
           />
         ))}
       </div>
-
-      {!isBombConfigured && (
-        <BombWarning message="Configurez la bombe (numéro de série, piles, ports) pour obtenir les décisions." />
-      )}
 
       <Button
         variant="outline"

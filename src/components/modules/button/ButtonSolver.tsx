@@ -2,33 +2,39 @@
 
 import { useState } from 'react'
 import { ButtonColor, ButtonLabel } from '@/types/modules'
-import { solveButton, StripColor, ButtonResult } from '@/lib/modules/button'
-import { useBombContext } from '@/app/context/BombContext'
+import { solveButton, StripColor, ButtonResult, ButtonConditions } from '@/lib/modules/button'
+import { BombConditions } from '@/components/modules/shared/BombConditions'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-// ─── Données de configuration ─────────────────────────────────────────────────
+// ─── Constantes ───────────────────────────────────────────────────────────────
 
 const BUTTON_COLORS: { value: ButtonColor; label: string; bgClass: string; ringClass: string }[] = [
-  { value: 'red', label: 'Rouge', bgClass: 'bg-red-600 hover:bg-red-500', ringClass: 'ring-red-500' },
-  { value: 'blue', label: 'Bleu', bgClass: 'bg-blue-600 hover:bg-blue-500', ringClass: 'ring-blue-400' },
+  { value: 'red',    label: 'Rouge', bgClass: 'bg-red-600 hover:bg-red-500',     ringClass: 'ring-red-500' },
+  { value: 'blue',   label: 'Bleu',  bgClass: 'bg-blue-600 hover:bg-blue-500',   ringClass: 'ring-blue-400' },
   { value: 'yellow', label: 'Jaune', bgClass: 'bg-yellow-400 hover:bg-yellow-300', ringClass: 'ring-yellow-300' },
-  { value: 'white', label: 'Blanc', bgClass: 'bg-zinc-100 hover:bg-white', ringClass: 'ring-zinc-300' },
+  { value: 'white',  label: 'Blanc', bgClass: 'bg-zinc-100 hover:bg-white',      ringClass: 'ring-zinc-300' },
 ]
 
 const BUTTON_LABELS: { value: ButtonLabel; display: string }[] = [
-  { value: 'abort', display: 'ABORT' },
+  { value: 'abort',    display: 'ABORT' },
   { value: 'detonate', display: 'DETONATE' },
-  { value: 'hold', display: 'HOLD' },
-  { value: 'press', display: 'PRESS' },
+  { value: 'hold',     display: 'HOLD' },
+  { value: 'press',    display: 'PRESS' },
 ]
 
 const STRIP_COLORS: { value: StripColor; label: string; bgClass: string; borderClass: string }[] = [
-  { value: 'blue', label: 'Bleu', bgClass: 'bg-blue-600', borderClass: 'border-blue-400' },
-  { value: 'white', label: 'Blanc', bgClass: 'bg-zinc-100', borderClass: 'border-zinc-300' },
+  { value: 'blue',   label: 'Bleu',  bgClass: 'bg-blue-600',  borderClass: 'border-blue-400' },
+  { value: 'white',  label: 'Blanc', bgClass: 'bg-zinc-100',  borderClass: 'border-zinc-300' },
   { value: 'yellow', label: 'Jaune', bgClass: 'bg-yellow-400', borderClass: 'border-yellow-300' },
-  { value: 'other', label: 'Autre', bgClass: 'bg-zinc-600', borderClass: 'border-zinc-500' },
+  { value: 'other',  label: 'Autre', bgClass: 'bg-zinc-600',  borderClass: 'border-zinc-500' },
 ]
+
+const DEFAULT_CONDITIONS: ButtonConditions = {
+  hasMoreThanOneBattery:    false,
+  hasMoreThanTwoBatteries:  false,
+  hasFrkLit:                false,
+}
 
 // ─── Sous-composants ─────────────────────────────────────────────────────────
 
@@ -108,7 +114,7 @@ function StripSelector({ selected, onSelect }: StripSelectorProps) {
   return (
     <div className="flex flex-col gap-2">
       <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
-        Couleur de la bande DEL
+        Couleur de la bande LED
       </span>
       <div className="flex gap-3 items-center">
         {STRIP_COLORS.map(({ value, label, bgClass, borderClass }) => (
@@ -147,9 +153,7 @@ function ActionResult({ result }: ActionResultProps) {
       <div
         className={cn(
           'border p-4 flex items-center gap-3',
-          isHold
-            ? 'border-ktane-amber/40 bg-ktane-amber/5'
-            : 'border-primary/40 bg-primary/5',
+          isHold ? 'border-ktane-amber/40 bg-ktane-amber/5' : 'border-primary/40 bg-primary/5',
         )}
       >
         <span className={cn('text-lg', isHold ? 'text-ktane-amber' : 'text-primary')}>
@@ -170,40 +174,25 @@ function ActionResult({ result }: ActionResultProps) {
   )
 }
 
-interface BombWarningProps {
-  message: string
-}
-
-function BombWarning({ message }: BombWarningProps) {
-  return (
-    <div className="border border-ktane-amber/40 bg-ktane-amber/5 p-4 flex items-center gap-3">
-      <span className="text-ktane-amber text-lg">⚠</span>
-      <p className="font-mono text-xs text-muted-foreground">{message}</p>
-    </div>
-  )
-}
-
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function ButtonSolver() {
-  const { bombInfo } = useBombContext()
   const [selectedColor, setSelectedColor] = useState<ButtonColor | null>(null)
   const [selectedLabel, setSelectedLabel] = useState<ButtonLabel | null>(null)
   const [selectedStrip, setSelectedStrip] = useState<StripColor | null>(null)
   const [showStripSelector, setShowStripSelector] = useState(false)
-
-  const isBombConfigured = bombInfo.serialNumber.length > 0
+  const [conditions, setConditions] = useState<ButtonConditions>(DEFAULT_CONDITIONS)
 
   const preliminaryResult =
-    selectedColor && selectedLabel && isBombConfigured
-      ? solveButton(selectedColor, selectedLabel, bombInfo)
+    selectedColor && selectedLabel
+      ? solveButton(selectedColor, selectedLabel, conditions)
       : null
 
-  const needsStrip = preliminaryResult?.action === 'hold'
+  const needsStrip  = preliminaryResult?.action === 'hold'
 
   const finalResult =
     needsStrip && selectedStrip
-      ? solveButton(selectedColor!, selectedLabel!, bombInfo, selectedStrip)
+      ? solveButton(selectedColor!, selectedLabel!, conditions, selectedStrip)
       : needsStrip
         ? null
         : preliminaryResult
@@ -225,22 +214,34 @@ export function ButtonSolver() {
     setSelectedLabel(null)
     setSelectedStrip(null)
     setShowStripSelector(false)
+    setConditions(DEFAULT_CONDITIONS)
   }
 
   return (
     <div className="flex flex-col gap-6">
+      <BombConditions
+        conditions={{
+          hasMoreThanOneBattery:   conditions.hasMoreThanOneBattery,
+          hasMoreThanTwoBatteries: conditions.hasMoreThanTwoBatteries,
+          hasFrkLit:               conditions.hasFrkLit,
+        }}
+        visibleKeys={['hasMoreThanOneBattery', 'hasMoreThanTwoBatteries', 'hasFrkLit']}
+        onChange={(c) =>
+          setConditions({
+            hasMoreThanOneBattery:   !!c.hasMoreThanOneBattery,
+            hasMoreThanTwoBatteries: !!c.hasMoreThanTwoBatteries,
+            hasFrkLit:               !!c.hasFrkLit,
+          })
+        }
+      />
       <ColorSelector selected={selectedColor} onSelect={handleColorSelect} />
+
       <LabelSelector selected={selectedLabel} onSelect={handleLabelSelect} />
 
-      {!isBombConfigured && (
-        <BombWarning message="Configurez le numéro de série de la bombe pour obtenir le résultat." />
-      )}
 
-      {needsStrip && !showStripSelector && isBombConfigured && (
+      {needsStrip && !showStripSelector && (
         <div className="border border-ktane-amber/40 bg-ktane-amber/5 p-4 flex flex-col gap-3">
-          <p className="font-mono text-sm text-ktane-amber">
-            ⏸ Maintenez le bouton enfoncé.
-          </p>
+          <p className="font-mono text-sm text-ktane-amber">⏸ Maintenez le bouton enfoncé.</p>
           <p className="font-mono text-xs text-muted-foreground">
             Quelle est la couleur de la bande lumineuse sur le côté ?
           </p>

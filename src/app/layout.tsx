@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Geist_Mono } from 'next/font/google'
-import { BombProvider } from '@/app/context/BombContext'
 import './globals.css'
 
 const geistMono = Geist_Mono({
@@ -21,7 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="fr" className={`${geistMono.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-background text-foreground antialiased">
-        <BombProvider>{children}</BombProvider>
+        {children}
       </body>
     </html>
   )

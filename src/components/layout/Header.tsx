@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { NavLink } from './NavLink'
 import { StatusIndicator } from './StatusIndicator'
-import { BombInfoDialog } from './BombInfoDialog'
 
 const MODULE_LINKS = [
   { href: '/modules/wires', label: 'Fils' },
@@ -16,7 +15,6 @@ export function Header() {
         <HeaderLogo />
         <ModuleNav />
         <div className="flex items-center gap-3 shrink-0">
-          <BombInfoDialog />
           <StatusIndicator />
         </div>
       </div>

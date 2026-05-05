@@ -2,18 +2,22 @@
 
 import { useState } from 'react'
 import { WireColor } from '@/types/modules'
-import { solveWires } from '@/lib/modules/wires'
-import { useBombContext } from '@/app/context/BombContext'
+import { solveWires, WiresConditions } from '@/lib/modules/wires'
+import { BombConditions } from '@/components/modules/shared/BombConditions'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
+// ─── Constantes ───────────────────────────────────────────────────────────────
+
 const WIRE_COLORS: { value: WireColor; label: string; bgClass: string; borderClass: string }[] = [
-  { value: 'red', label: 'Rouge', bgClass: 'bg-red-600', borderClass: 'border-red-500' },
-  { value: 'blue', label: 'Bleu', bgClass: 'bg-blue-500', borderClass: 'border-blue-400' },
+  { value: 'red',    label: 'Rouge', bgClass: 'bg-red-600',   borderClass: 'border-red-500' },
+  { value: 'blue',   label: 'Bleu',  bgClass: 'bg-blue-500',  borderClass: 'border-blue-400' },
   { value: 'yellow', label: 'Jaune', bgClass: 'bg-yellow-400', borderClass: 'border-yellow-300' },
-  { value: 'white', label: 'Blanc', bgClass: 'bg-zinc-100', borderClass: 'border-zinc-300' },
-  { value: 'black', label: 'Noir', bgClass: 'bg-zinc-900', borderClass: 'border-zinc-600' },
+  { value: 'white',  label: 'Blanc', bgClass: 'bg-zinc-100',  borderClass: 'border-zinc-300' },
+  { value: 'black',  label: 'Noir',  bgClass: 'bg-zinc-900',  borderClass: 'border-zinc-600' },
 ]
+
+const DEFAULT_CONDITIONS: WiresConditions = { serialLastDigitOdd: false }
 
 // ─── Sous-composants ─────────────────────────────────────────────────────────
 
@@ -91,25 +95,9 @@ interface WireResultProps {
 
 function WireResult({ instruction }: WireResultProps) {
   return (
-    <div className={cn(
-      'border border-primary/40 bg-primary/5 p-4',
-      'flex items-center gap-3',
-    )}>
+    <div className="border border-primary/40 bg-primary/5 p-4 flex items-center gap-3">
       <span className="text-primary text-lg">✓</span>
       <p className="font-mono text-sm text-foreground tracking-wide">{instruction}</p>
-    </div>
-  )
-}
-
-interface BombWarningProps {
-  message: string
-}
-
-function BombWarning({ message }: BombWarningProps) {
-  return (
-    <div className="border border-ktane-amber/40 bg-ktane-amber/5 p-4 flex items-center gap-3">
-      <span className="text-ktane-amber text-lg">⚠</span>
-      <p className="font-mono text-xs text-muted-foreground">{message}</p>
     </div>
   )
 }
@@ -117,9 +105,9 @@ function BombWarning({ message }: BombWarningProps) {
 // ─── Composant principal ──────────────────────────────────────────────────────
 
 export function WiresSolver() {
-  const { bombInfo } = useBombContext()
-  const [wireCount, setWireCount] = useState(3)
+  const [wireCount, setWireCount]       = useState(3)
   const [selectedColors, setSelectedColors] = useState<(WireColor | null)[]>(Array(3).fill(null))
+  const [conditions, setConditions]     = useState<WiresConditions>(DEFAULT_CONDITIONS)
 
   function handleWireCountChange(count: number) {
     setWireCount(count)
@@ -136,18 +124,20 @@ export function WiresSolver() {
 
   function handleReset() {
     setSelectedColors(Array(wireCount).fill(null))
+    setConditions(DEFAULT_CONDITIONS)
   }
 
   const allSelected = selectedColors.every((c) => c !== null)
-  const isBombConfigured = bombInfo.serialNumber.length > 0
-
-  const result =
-    allSelected && isBombConfigured
-      ? solveWires(selectedColors as WireColor[], bombInfo)
-      : null
+  const result = allSelected ? solveWires(selectedColors as WireColor[], conditions) : null
 
   return (
     <div className="flex flex-col gap-6">
+      <BombConditions
+        conditions={{ serialLastDigitOdd: conditions.serialLastDigitOdd }}
+        visibleKeys={['serialLastDigitOdd']}
+        onChange={(c) => setConditions({ serialLastDigitOdd: !!c.serialLastDigitOdd })}
+      />
+      
       <WireCountControl count={wireCount} onChange={handleWireCountChange} />
 
       <div className="flex flex-col gap-3">
@@ -164,9 +154,6 @@ export function WiresSolver() {
         ))}
       </div>
 
-      {!isBombConfigured && (
-        <BombWarning message="Configurez le numéro de série de la bombe pour obtenir le résultat." />
-      )}
 
       {result && <WireResult instruction={result} />}
 

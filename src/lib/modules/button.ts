@@ -1,4 +1,12 @@
-import { ButtonColor, ButtonLabel, BombInfo } from '@/types/modules'
+import { ButtonColor, ButtonLabel } from '@/types/modules'
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface ButtonConditions {
+  hasMoreThanOneBattery: boolean
+  hasMoreThanTwoBatteries: boolean
+  hasFrkLit: boolean
+}
 
 export type ButtonAction = 'press' | 'hold'
 
@@ -9,18 +17,14 @@ export interface ButtonResult {
   holdInstruction?: string
 }
 
-// ─── Règles de relâchement (si on tient le bouton) ───────────────────────────
+// ─── Règles de relâchement ────────────────────────────────────────────────────
 
 function getReleaseDigit(stripColor: StripColor): string {
   switch (stripColor) {
-    case 'blue':
-      return '4'
-    case 'white':
-      return '1'
-    case 'yellow':
-      return '5'
-    default:
-      return '1'
+    case 'blue':   return '4'
+    case 'white':  return '1'
+    case 'yellow': return '5'
+    default:       return '1'
   }
 }
 
@@ -34,13 +38,12 @@ function buildHoldInstruction(stripColor: StripColor): string {
 function shouldPressImmediately(
   color: ButtonColor,
   label: ButtonLabel,
-  bombInfo: BombInfo,
+  conditions: ButtonConditions,
 ): boolean {
   if (color === 'blue' && label === 'abort') return false
-  if (bombInfo.batteryCount > 1 && label === 'detonate') return true
+  if (conditions.hasMoreThanOneBattery && label === 'detonate') return true
   if (color === 'white') return false
-  const hasFrkLit = bombInfo.indicators.some((i) => i.code === 'FRK' && i.isLit)
-  if (bombInfo.batteryCount > 2 && hasFrkLit) return true
+  if (conditions.hasMoreThanTwoBatteries && conditions.hasFrkLit) return true
   if (color === 'yellow') return false
   if (color === 'red' && label === 'hold') return true
   return false
@@ -51,14 +54,12 @@ function shouldPressImmediately(
 export function solveButton(
   color: ButtonColor,
   label: ButtonLabel,
-  bombInfo: BombInfo,
+  conditions: ButtonConditions,
   stripColor?: StripColor,
 ): ButtonResult {
-  const pressImmediately = shouldPressImmediately(color, label, bombInfo)
+  const pressImmediately = shouldPressImmediately(color, label, conditions)
 
-  if (pressImmediately) {
-    return { action: 'press' }
-  }
+  if (pressImmediately) return { action: 'press' }
 
   const resolvedStrip = stripColor ?? 'other'
   return {

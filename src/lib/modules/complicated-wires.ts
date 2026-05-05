@@ -39,7 +39,7 @@ const DECISION_TABLE: Record<string, DecisionRule> = {
   'blue--':      'S',  // aucun → couper si numéro de série pair
   'blue-L-':     'P',  // LED seulement → couper si port parallèle
   'blue--S':     'N',  // star seulement → ne jamais couper
-  'blue-L-S':    'B',  // LED + star → couper si port parallèle
+  'blue-L-S':    'P',  // LED + star → couper si port parallèle
 
   // Red + Blue
   'red-blue--':  'S',  // aucun → couper si numéro de série pair

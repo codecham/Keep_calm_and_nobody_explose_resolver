@@ -1,6 +1,6 @@
 # KTANE Solver — Project Tracker
 
-## Statut global : 🟡 En cours de planification
+## Statut global : 🔵 En cours de planification
 
 ---
 
@@ -34,11 +34,11 @@
 
 | #   | Tâche                                        | Statut | Notes                           |
 | --- | -------------------------------------------- | ------ | ------------------------------- |
-| 1.1 | Créer le layout principal (`app/layout.tsx`) | ⬜     | Header, fond sombre, police     |
-| 1.2 | Créer le composant `Header.tsx`              | ⬜     | Titre, accès rapide aux modules |
-| 1.3 | Créer le composant `ModuleCard.tsx`          | ⬜     | Nom, icône, statut              |
-| 1.4 | Créer la page dashboard (`app/page.tsx`)     | ⬜     | Grille de ModuleCards           |
-| 1.5 | Modale / panneau "Infos de la bombe"         | ⬜     | Alimenter le BombContext        |
+| 1.1 | Créer le layout principal (`app/layout.tsx`) | ✅     | Header, fond sombre, police     |
+| 1.2 | Créer le composant `Header.tsx`              | ✅     | Titre, accès rapide aux modules |
+| 1.3 | Créer le composant `ModuleCard.tsx`          | ✅     | Nom, icône, statut              |
+| 1.4 | Créer la page dashboard (`app/page.tsx`)     | ✅     | Grille de ModuleCards           |
+| 1.5 | Modale / panneau "Infos de la bombe"         | ✅     | Alimenter le BombContext        |
 
 ---
 

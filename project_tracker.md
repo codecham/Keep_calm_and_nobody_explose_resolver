@@ -68,10 +68,10 @@
 
 | #   | Tâche                                                     | Statut | Notes                                                     |
 | --- | --------------------------------------------------------- | ------ | --------------------------------------------------------- |
-| 4.1 | Implémenter la logique `src/lib/modules/complicated-wires.ts` | ⬜     | Table de décision avec LED/étoile/couleur                 |
-| 4.2 | Créer le composant `ComplicatedWiresSolver.tsx`           | ⬜     | Interface pour chaque fil, affichage couper/ne pas couper |
-| 4.3 | Créer la page `src/app/modules/complicated-wires/page.tsx`    | ⬜     |                                                           |
-| 4.4 | Tests manuels de toutes les combinaisons                  | ⬜     |                                                           |
+| 4.1 | Implémenter la logique `src/lib/modules/complicated-wires.ts` | ✅     | Table de décision avec LED/étoile/couleur                 |
+| 4.2 | Créer le composant `ComplicatedWiresSolver.tsx`           | ✅     | Interface pour chaque fil, affichage couper/ne pas couper |
+| 4.3 | Créer la page `src/app/modules/complicated-wires/page.tsx`    | ✅     |                                                           |
+| 4.4 | Tests manuels de toutes les combinaisons                  | ✅     |                                                           |
 
 ---
 

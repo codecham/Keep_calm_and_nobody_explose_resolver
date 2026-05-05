@@ -21,8 +21,8 @@
 | #   | Tâche                                                             | Statut | Notes                                            |
 | --- | ----------------------------------------------------------------- | ------ | ------------------------------------------------ |
 | 0.1 | Initialiser le projet Next.js (TypeScript, Tailwind, shadcn/ui)   | ✅     | `npx create-next-app`                            |
-| 0.2 | Configurer ESLint + Prettier                                      | ✅      |                                                  |
-| 0.3 | Créer la structure de dossiers du projet                          | ⬜     | Voir INSTRUCTIONS.md                             |
+| 0.2 | Configurer ESLint + Prettier                                      | ✅     |                                                  |
+| 0.3 | Créer la structure de dossiers du projet                          | ✅     | Voir INSTRUCTIONS.md                             |
 | 0.4 | Créer le `BombContext` (infos globales de la bombe)               | ⬜     | Numéro de série, piles, indicateurs, ports       |
 | 0.5 | Créer les types partagés (`types/modules.ts`)                     | ⬜     |                                                  |
 | 0.6 | Configurer `cn()` (clsx + tailwind-merge) et vérifier dispo `cva` | ⬜     | Obligatoire pour la gestion des classes Tailwind |

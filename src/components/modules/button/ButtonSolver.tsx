@@ -149,7 +149,7 @@ function ActionResult({ result }: ActionResultProps) {
   const isHold = result.action === 'hold'
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="animate-result-in flex flex-col gap-3">
       <div
         className={cn(
           'border p-4 flex items-center gap-3',
@@ -240,7 +240,7 @@ export function ButtonSolver() {
       <LabelSelector selected={selectedLabel} onSelect={handleLabelSelect} />
 
       {needsStrip && !showStripSelector && (
-        <div className="border border-ktane-amber/40 bg-ktane-amber/5 p-4 flex flex-col gap-3">
+        <div className="animate-result-in border border-ktane-amber/40 bg-ktane-amber/5 p-4 flex flex-col gap-3">
           <p className="font-mono text-sm text-ktane-amber">⏸ Maintenez le bouton enfoncé.</p>
           <p className="font-mono text-xs text-muted-foreground">
             Quelle est la couleur de la bande lumineuse sur le côté ?
@@ -255,8 +255,11 @@ export function ButtonSolver() {
       )}
 
       {needsStrip && showStripSelector && (
-        <StripSelector selected={selectedStrip} onSelect={setSelectedStrip} />
+        <div className="animate-fade-in">
+          <StripSelector selected={selectedStrip} onSelect={setSelectedStrip} />
+        </div>
       )}
+
 
       {finalResult && <ActionResult result={finalResult} />}
 

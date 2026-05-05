@@ -95,7 +95,7 @@ interface WireResultProps {
 
 function WireResult({ instruction }: WireResultProps) {
   return (
-    <div className="border border-primary/40 bg-primary/5 p-4 flex items-center gap-3">
+    <div className="animate-result-in border border-primary/40 bg-primary/5 p-4 flex items-center gap-3">
       <span className="text-primary text-lg shrink-0">✓</span>
       <p className="font-mono text-sm text-foreground tracking-wide">{instruction}</p>
     </div>
@@ -154,7 +154,7 @@ export function WiresSolver() {
         ))}
       </div>
 
-      {result && <WireResult instruction={result} />}
+      {result && <WireResult key={result} instruction={result} />}
 
       <Button
         variant="outline"

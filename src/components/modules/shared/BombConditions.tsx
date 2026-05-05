@@ -56,7 +56,7 @@ function ConditionToggle({ label, active, onToggle }: ConditionToggleProps) {
           active ? 'border-primary bg-primary/20' : 'border-muted-foreground/50',
         )}
       >
-        {active && <span className="text-primary text-[10px] leading-none">✓</span>}
+        {active && <span className="text-primary text-[10px] leading-none animate-fade-in">✓</span>}
       </span>
       {label}
     </button>

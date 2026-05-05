@@ -118,7 +118,7 @@ function WireDecisionBadge({ decision }: WireDecisionBadgeProps) {
   return (
     <span
       className={cn(
-        'font-mono text-xs shrink-0',
+        'font-mono text-xs shrink-0 transition-colors duration-200',
         decision === 'couper' ? 'text-primary' : 'text-red-400',
       )}
     >

@@ -6,7 +6,7 @@ export default function ButtonPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-10">
+      <main className="animate-fade-in flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-10">
         <ModulePageHeader />
         <ButtonSolver />
       </main>
